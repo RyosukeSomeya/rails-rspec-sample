@@ -20,7 +20,7 @@ class FoodEnquete < ApplicationRecord
     { id: 1,
       name: FoodEnquete.human_attribute_name(:food_list)[1][:name],
       price: FoodEnquete.human_attribute_name(:food_list)[1][:price] },
-    { id: 2, 
+    { id: 2,
       name: FoodEnquete.human_attribute_name(:food_list)[2][:name],
       price: FoodEnquete.human_attribute_name(:food_list)[2][:price] }
   ]
