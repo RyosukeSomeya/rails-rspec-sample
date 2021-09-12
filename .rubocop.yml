@@ -28,6 +28,10 @@ Style/HashTransformKeys:
 Style/HashTransformValues:
   Enabled: true
 
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
 # 日本語のコメントを許可する
 Style/AsciiComments:
   Enabled: false
