@@ -59,11 +59,11 @@ shared_examples '価格の表示' do
   # 8%で計算
   describe '税込価格が計算されること' do
     it '8%加算されること' do
-      expect(model.tax_included_price(100)).to eq 108
+      expect(model.tax_included_price(100)).to eq 110
     end
 
     it '8%加算され、小数点以下は切り捨てられること' do
-      expect(model.tax_included_price(101)).to eq 109
+      expect(model.tax_included_price(101)).to eq 111
     end
   end
 end

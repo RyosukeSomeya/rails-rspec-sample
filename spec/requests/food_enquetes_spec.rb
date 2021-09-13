@@ -15,7 +15,7 @@ RSpec.describe "FoodEnquetes", type: :request do
         follow_redirect!
 
         # 送信完了のメッセージがレスポンスに含まれることを検証します。
-        expect(response.body).to include 'お食事に関するアンケートを送信しました'
+        expect(response.body).to include 'ご回答ありがとうございました'
       end
     end
   end
@@ -31,7 +31,7 @@ RSpec.describe "FoodEnquetes", type: :request do
         post '/food_enquetes', params: { food_enquete: { name: '' } }
 
         # 送信完了のメッセージがレスポンスに含まれないことを検証します。
-        expect(response.body).not_to include 'お食事に関するアンケートを送信しました'
+        expect(response.body).not_to include 'ご回答ありがとうございました'
       end
     end
   end

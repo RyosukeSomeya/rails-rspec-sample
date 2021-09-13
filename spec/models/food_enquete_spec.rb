@@ -37,22 +37,14 @@ RSpec.describe FoodEnquete, type: :model do
         FactoryBot.create(:food_enquete_tanaka) # create => saveもする
       end
 
-      it '同じメールアドレスで再び回答できないこと' do
-        # 二人目のデータ(メールアドレスが同じ) 第2引数でデータ内容の上書き
-        re_enquete_tanaka = FactoryBot.build(:food_enquete_tanaka, food_id: 0, score: 1, present_id: 0, request: 'スープがぬるかった')
-
-        # バリデーションエラーが発生する
-        expect(re_enquete_tanaka).not_to be_valid
-
-        # メールアドレスがすでに存在するエラーメッセージの確認
-        expect(re_enquete_tanaka.errors[:mail]).to include(I18n.t('errors.messages.taken'))
-        # 2つ目のアンケートは保存できない
-        expect(re_enquete_tanaka.save).to be_falsey
-        # アンケート数は最初のものだけなので一つのはず
-        expect(FoodEnquete.all.size).to eq 1
+      it '同じメールアドレスで再び回答できること' do
+        re_enquete_tanaka = FactoryBot.build(:food_enquete_tanaka, food_id: 0, score: 1, present_id: 0, request: "スープがぬるかった")
+        expect(re_enquete_tanaka).to be_valid
+        expect(re_enquete_tanaka.save).to be_truthy
+        expect(FoodEnquete.all.size).to eq 2
       end
 
-      it '異なるメールアドレスで再び回答でること' do
+      it '異なるメールアドレスで再び回答できること' do
         # 二人目のデータ(メールアドレスが異なる)
         enquete_yamada = FactoryBot.build(:food_enquete_yamada)
 
