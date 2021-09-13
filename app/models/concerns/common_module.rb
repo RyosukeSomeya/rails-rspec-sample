@@ -3,7 +3,7 @@ module CommonModule
 
   # 【学習者の方へ】
   # 後ほど、仕様変更するシナリオになっています。
-  TAX = 1.08        # 本体価格 + 消費税率
+  TAX = 1.1         # 本体価格 + 消費税率
   SCORE_BAD = 1     # 満足度:悪い
   SCORE_NORMAL = 2  # 満足度:普通
   SCORE_GOOD = 3    # 満足度:良い
@@ -17,7 +17,7 @@ module CommonModule
     validates :name, presence: true, length: { maximum: 16 }
 
     # メールアドレス 必須入力 最大64文字 メールアドレスの形式 重複メールアドレスは不可
-    validates :mail, presence: true, length: { maximum: 64 }, format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i }, uniqueness: { case_sensitive: false }
+    validates :mail, presence: true, length: { maximum: 64 }, format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i }
 
     # 年齢 必須入力 数値 整数のみ 0〜100歳
     validates :age, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
