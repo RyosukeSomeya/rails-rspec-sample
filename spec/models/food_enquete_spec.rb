@@ -30,10 +30,12 @@ RSpec.describe FoodEnquete, type: :model do
   end
 
   # 必須項目のテスト
-  describe '入力項目の有無'do
+  describe '入力項目の有無' do
+    # モデルインスタンスを事前に作成しておくことで、以下の2つのcontextで使い回せる
+    let(:new_enquete) { FoodEnquete.new }
+
     context '必須入力であること' do
       it 'お名前が必須入力であること' do
-        new_enquete = FoodEnquete.new
         # バリデーションエラーの検証
         expect(new_enquete).not_to be_valid
         # お名前に関するエラーの配列を取り出して検証
@@ -41,7 +43,6 @@ RSpec.describe FoodEnquete, type: :model do
       end
 
       it 'メールアドレスが必須であること' do
-        new_enquete = FoodEnquete.new
         expect(new_enquete).not_to be_valid
         # メールアドレスに関するエラーの配列を取り出して検証
         expect(new_enquete.errors[:mail]).to include(I18n.t('errors.messages.blank'))
@@ -49,19 +50,17 @@ RSpec.describe FoodEnquete, type: :model do
 
       it '登録できないこと' do
         # 必須項目が未入力なので登録できない
-        new_enquete = FoodEnquete.new
         expect(new_enquete.save).to be_falsey
       end
     end
-  end
 
-  # 任意入力のテスト
-  describe '任意入力であること' do
-    it 'ご意見・ご要望が任意であること' do
-      new_enquete = FoodEnquete.new
-      expect(new_enquete).not_to be_valid
-      # ご意見ご要望に関するエラーの配列を取り出して、必須入力のエラーが含まれないことを検証
-      expect(new_enquete.errors[:request]).not_to include(I18n.t('errors.messages.blank'))
+    # 任意入力のテスト
+    context '任意入力であること' do
+      it 'ご意見・ご要望が任意であること' do
+        expect(new_enquete).not_to be_valid
+        # ご意見ご要望に関するエラーの配列を取り出して、必須入力のエラーが含まれないことを検証
+        expect(new_enquete.errors[:request]).not_to include(I18n.t('errors.messages.blank'))
+      end
     end
   end
 
@@ -70,7 +69,6 @@ RSpec.describe FoodEnquete, type: :model do
     context '不正なメールアドレスの場合' do
       it 'エラーになること' do
         new_enquete = FoodEnquete.new
-
         # 不正な形式のメールアドレス
         new_enquete.mail = 'taro.tanaka'
         expect(new_enquete).not_to be_valid
@@ -83,10 +81,12 @@ RSpec.describe FoodEnquete, type: :model do
   # アンケート回答時の条件
   describe 'アンケート回答時の条件' do
     context 'メールアドレスを確認すること' do
-      it '同じメールアドレスで再び回答できないこと' do
-        # 一人目のデータ
+      # 一人目のデータは以降の2つのテストケースで共通なので事前処理する
+      before do
         FactoryBot.create(:food_enquete_tanaka) # create => saveもする
+      end
 
+      it '同じメールアドレスで再び回答できないこと' do
         # 二人目のデータ(メールアドレスが同じ) 第2引数でデータ内容の上書き
         re_enquete_tanaka = FactoryBot.build(:food_enquete_tanaka, food_id: 0, score: 1, present_id: 0, request: 'スープがぬるかった')
 
@@ -102,8 +102,6 @@ RSpec.describe FoodEnquete, type: :model do
       end
 
       it '異なるメールアドレスで再び回答でること' do
-        # 一人目のデータ
-        FactoryBot.create(:food_enquete_tanaka)
         # 二人目のデータ(メールアドレスが異なる)
         enquete_yamada = FactoryBot.build(:food_enquete_yamada)
 
