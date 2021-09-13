@@ -75,6 +75,72 @@ RSpec.describe FoodEnquete, type: :model do
 
   # アンケート回答時の条件
   describe 'アンケート回答時の条件' do
+    context 'メールアドレスを確認すること' do
+      it '同じメールアドレスで再び回答できないこと' do
+        # 一人目のデータ
+        enquete_tanaka = FoodEnquete.new(
+          name: '田中 太郎',
+          mail: 'taro.tanaka@example.com',
+          age: 25,
+          food_id: 2,
+          score: 3,
+          request: 'おいしかったです。',
+          present_id: 1
+        )
+        enquete_tanaka.save
+
+        # 二人目のデータ(メールアドレスが同じ)
+        re_enquete_tanaka = FoodEnquete.new(
+          name: '田中 太郎',
+          mail: 'taro.tanaka@example.com',
+          age: 25,
+          food_id: 0,
+          score: 1,
+          request: 'スープがぬるかった',
+          present_id: 0
+        )
+        # バリデーションエラーが発生する
+        expect(re_enquete_tanaka).not_to be_valid
+
+        # メールアドレスがすでに存在するエラーメッセージの確認
+        expect(re_enquete_tanaka.errors[:mail]).to include(I18n.t('errors.messages.taken'))
+        # 2つ目のアンケートは保存できない
+        expect(re_enquete_tanaka.save).to be_falsey
+        # アンケート数は最初のものだけなので一つのはず
+        expect(FoodEnquete.all.size).to eq 1
+      end
+
+      it '異なるメールアドレスで再び回答でること' do
+        # 一人目のデータ
+        enquete_tanaka = FoodEnquete.new(
+          name: '田中 太郎',
+          mail: 'taro.tanaka@example.com',
+          age: 25,
+          food_id: 2,
+          score: 3,
+          request: 'おいしかったです。',
+          present_id: 1
+        )
+        enquete_tanaka.save
+
+        # 二人目のデータ(メールアドレスが異なる)
+        enquete_yamada = FoodEnquete.new(
+          name: '山田 太郎',
+          mail: 'taro.yamada@example.com',
+          age: 22,
+          food_id: 1,
+          score: 2,
+          request: '',
+          present_id: 0
+        )
+        expect(enquete_yamada).to be_valid
+
+        enquete_yamada.save
+        # アンケートは2つdbに保存されている
+        expect(FoodEnquete.all.size).to eq 2
+      end
+    end
+
     context '年齢を確認すること' do
       it '未成年はビール飲み放題を選択できないこと' do
         # テストデータ
