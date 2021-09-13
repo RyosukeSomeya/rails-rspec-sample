@@ -145,4 +145,11 @@ RSpec.describe FoodEnquete, type: :model do
       expect(food_enquete.send(:adult?, 20)).to be_truthy
     end
   end
+
+  # 共通メソッドのテスト
+  describe '共通メソッド' do
+    # support/concerns/common_module.rbで定義したテストケースの呼び出し
+    it_behaves_like '価格の表示'
+    it_behaves_like '満足度の表示'
+  end
 end
