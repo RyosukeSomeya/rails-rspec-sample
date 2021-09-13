@@ -72,4 +72,56 @@ RSpec.describe FoodEnquete, type: :model do
       expect(new_enquete.errors[:request]).not_to include(I18n.t('errors.messages.blank'))
     end
   end
+
+  # アンケート回答時の条件
+  describe 'アンケート回答時の条件' do
+    context '年齢を確認すること' do
+      it '未成年はビール飲み放題を選択できないこと' do
+        # テストデータ
+        enquete_yamada = FoodEnquete.new(
+          name: '山田花子',
+          mail: 'hanako.yamada@example.com',
+          age: 19,
+          food_id: 2,
+          score: 3,
+          request: 'おいしかったです。',
+          present_id: 1 # ビール飲み放題
+        )
+        # バリデーションでエラーが発生していること
+        expect(enquete_yamada).not_to be_valid
+        # エラー内容を検証
+        expect(enquete_yamada.errors[:present_id]).to include(I18n.t('activerecord.errors.models.food_enquete.attributes.present_id.cannot_present_to_minor'))
+      end
+
+      it '成人はビール飲み放題を選択できること' do
+        # テストデータ
+        enquete_yamada = FoodEnquete.new(
+          name: '山田花子',
+          mail: 'hanako.yamada@example.com',
+          age: 20,
+          food_id: 2,
+          score: 3,
+          request: 'おいしかったです。',
+          present_id: 1 # ビール飲み放題
+        )
+
+        # バリデーションが発生していることを確認
+        expect(enquete_yamada).to be_valid
+      end
+    end
+  end
+
+  # プライベートメソッドのテスト
+  describe '#adult?' do
+    it '20歳未満は成人でないこと' do
+      food_enquete = FoodEnquete.new
+      # sendでプライベートメッソっどを指定できる
+      expect(food_enquete.send(:adult?, 19)).to be_falsey
+    end
+
+    it '20歳以上は成人である' do
+      food_enquete = FoodEnquete.new
+      expect(food_enquete.send(:adult?, 20)).to be_truthy
+    end
+  end
 end
