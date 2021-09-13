@@ -29,55 +29,6 @@ RSpec.describe FoodEnquete, type: :model do
     end
   end
 
-  # 必須項目のテスト
-  describe '入力項目の有無' do
-    # モデルインスタンスを事前に作成しておくことで、以下の2つのcontextで使い回せる
-    let(:new_enquete) { FoodEnquete.new }
-
-    context '必須入力であること' do
-      it 'お名前が必須入力であること' do
-        # バリデーションエラーの検証
-        expect(new_enquete).not_to be_valid
-        # お名前に関するエラーの配列を取り出して検証
-        expect(new_enquete.errors[:name]).to include(I18n.t('errors.messages.blank'))
-      end
-
-      it 'メールアドレスが必須であること' do
-        expect(new_enquete).not_to be_valid
-        # メールアドレスに関するエラーの配列を取り出して検証
-        expect(new_enquete.errors[:mail]).to include(I18n.t('errors.messages.blank'))
-      end
-
-      it '登録できないこと' do
-        # 必須項目が未入力なので登録できない
-        expect(new_enquete.save).to be_falsey
-      end
-    end
-
-    # 任意入力のテスト
-    context '任意入力であること' do
-      it 'ご意見・ご要望が任意であること' do
-        expect(new_enquete).not_to be_valid
-        # ご意見ご要望に関するエラーの配列を取り出して、必須入力のエラーが含まれないことを検証
-        expect(new_enquete.errors[:request]).not_to include(I18n.t('errors.messages.blank'))
-      end
-    end
-  end
-
-  # メールアドレス形式
-  describe 'メールアドレスの形式' do
-    context '不正なメールアドレスの場合' do
-      it 'エラーになること' do
-        new_enquete = FoodEnquete.new
-        # 不正な形式のメールアドレス
-        new_enquete.mail = 'taro.tanaka'
-        expect(new_enquete).not_to be_valid
-        # メールアドレスの形式が不正であるエラーの確認
-        expect(new_enquete.errors[:mail]).to include(I18n.t('errors.messages.invalid'))
-      end
-    end
-  end
-
   # アンケート回答時の条件
   describe 'アンケート回答時の条件' do
     context 'メールアドレスを確認すること' do
@@ -144,6 +95,12 @@ RSpec.describe FoodEnquete, type: :model do
       food_enquete = FoodEnquete.new
       expect(food_enquete.send(:adult?, 20)).to be_truthy
     end
+  end
+
+  # 共通バリデーション
+  describe '共通バリデーション' do
+    it_behaves_like '入力項目の有無'
+    it_behaves_like 'メールアドレスの形式'
   end
 
   # 共通メソッドのテスト
